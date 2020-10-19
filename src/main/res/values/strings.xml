@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Anotador1.0</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="navdatosMensuales">datosMensuales</string>
+    <string name="navNuevaLista">nuevaLista</string>
+    <string name="navVerListas">verListas</string>
+    <string name="guardarItems">guardarItems</string>
+    <string name="addItem">addItem</string>
+    <string name="editItem">editItem</string>
+</resources>

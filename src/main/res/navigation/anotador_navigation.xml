@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/anotador_navigation"
+    app:startDestination="@id/inicioFragment">
+    <fragment
+        android:id="@+id/inicioFragment"
+        android:name="com.example.anotador10.InicioFragment"
+        android:label="fragment_inicio"
+        tools:layout="@layout/fragment_inicio" >
+        <action
+            android:id="@+id/action_inicioFragment_to_datosMensualesFragment"
+            app:destination="@id/datosMensualesFragment" />
+        <action
+            android:id="@+id/action_inicioFragment_to_verListasFragment"
+            app:destination="@id/verListasFragment" />
+        <action
+            android:id="@+id/action_inicioFragment_to_nuevaListaFragment"
+            app:destination="@id/nuevaListaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/datosMensualesFragment"
+        android:name="com.example.anotador10.DatosMensualesFragment"
+        android:label="Datos Mensuales"
+        tools:layout="@layout/fragment_datos_mensuales" />
+    <fragment
+        android:id="@+id/nuevaListaFragment"
+        android:name="com.example.anotador10.NuevaListaFragment"
+        android:label="Nueva Lista"
+        tools:layout="@layout/fragment_nueva_lista" />
+    <fragment
+        android:id="@+id/verListasFragment"
+        android:name="com.example.anotador10.BuscarItemFragment"
+        android:label="Listas"
+        tools:layout="@layout/fragment_ver_listas" >
+        <action
+            android:id="@+id/action_verListasFragment_to_resultadosItemsFragment"
+            app:destination="@id/resultadosItemsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/resultadosItemsFragment"
+        android:name="com.example.anotador10.ResultadosItemsFragment"
+        android:label="fragment_resultados_items"
+        tools:layout="@layout/fragment_resultados_items" />
+</navigation>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    tools:context=".InicioFragment">
+<data>
+  <variable
+      name="control"
+      type="com.example.viewModels.ControlViewModel" />
+</data>
+ <ScrollView
+     android:layout_width="match_parent"
+     android:layout_height="match_parent">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical"
+      android:padding="15sp"
+      >
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+     <androidx.cardview.widget.CardView
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:padding="10sp"
+         app:cardElevation="10sp"
+         app:strokeColor="@color/colorBlack"
+         app:strokeWidth="1dp">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:padding="15sp">
+
+       <TextView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="Presupuesto"
+           android:textAppearance="@font/latoregular"
+           android:textSize="15sp"
+           android:textStyle="normal" />
+
+       <TextView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text=""
+
+           android:textSize="15sp" />
+
+       <androidx.appcompat.widget.AppCompatButton
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="Modificar"/>
+      </LinearLayout>
+
+
+     </androidx.cardview.widget.CardView>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="19dp"
+        android:layout_height="match_parent"
+
+        ></LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10sp"
+        app:cardElevation="10sp"
+        app:strokeColor="@color/colorBlack"
+        app:strokeWidth="1dp">
+
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:orientation="vertical"
+         android:padding="15sp">
+
+      <TextView
+          android:id="@+id/gastoFecha"
+          android:layout_width="match_parent"
+          android:layout_height="114dp"
+          android:textAlignment="center"
+          android:text="Gasto Current"
+          android:textAppearance="@font/latoregular"
+          android:textSize="18sp"
+          android:textStyle="normal" />
+
+      <TextView
+          android:id="@+id/montocurrent"
+          android:layout_width="match_parent"
+          android:layout_height="107dp"
+          android:text="HOLAAAAAAAAAAA" />
+      <androidx.appcompat.widget.AppCompatButton
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:onClick='@{() -> control.setAccion("nuevoMes")}'
+          android:text="Nuevo mes"/>
+
+     </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+   </LinearLayout>
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical"
+       android:padding="15sp">
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+
+        android:layout_height="69sp"
+        android:onClick='@{() -> control.Navegar(true,"datosMensuales")}'
+        android:text="Ver datos mensuales" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="69sp"
+        android:text="Nueva Lista"
+        android:onClick='@{() -> control.Navegar(true,"nuevaLista")}'/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="69sp"
+        android:onClick='@{() -> control.Navegar(true,"verListas")}'
+        android:text="Buscar items"
+        />
+
+   </LinearLayout>
+
+
+
+  </LinearLayout>
+
+ </ScrollView>
+
+
+
+
+</layout>

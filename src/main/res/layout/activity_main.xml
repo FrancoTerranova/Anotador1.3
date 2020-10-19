@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    >
+
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Toptoolbar"
+            android:backgroundTint="@color/colorBlack"
+            >
+
+
+
+        </androidx.appcompat.widget.Toolbar>
+
+<!--    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:liftOnScroll="true"
+        >
+
+        &lt;!&ndash;    <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:navigationIcon="@drawable/ic_baseline_menu_25"
+                style="@style/Widget.MaterialComponents.Toolbar.Primary"
+                />&ndash;&gt;
+
+    </com.google.android.material.appbar.AppBarLayout>-->
+
+    <fragment
+        android:id="@+id/nav_host_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.example.anotador10.HostFragment"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/anotador_navigation"
+
+        />
+
+</LinearLayout>

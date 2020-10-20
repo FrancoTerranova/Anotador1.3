@@ -4,6 +4,7 @@ import Entities.ItemLista
 import Entities.Lista_items
 import androidx.room.Dao
 import androidx.room.Query
+import java.math.BigDecimal
 
 @Dao
 interface busquedaItemsDAO {
@@ -22,8 +23,8 @@ interface busquedaItemsDAO {
             diaHasta : String,
             mesHasta : String,
             anioHasta : String,
-            valorDesde : Long,
-            valorHasta : Long
+            valorDesde : String,
+            valorHasta : String
 
     ): List<ItemLista>?
 
@@ -38,8 +39,8 @@ interface busquedaItemsDAO {
             diaUnico : String,
             mesUnico : String,
             anioUnico : String,
-            valorDesde : Long,
-            valorHasta : Long
+            valorDesde : String,
+            valorHasta : String
 
     ) : List<ItemLista>?
 
@@ -75,7 +76,7 @@ interface busquedaItemsDAO {
             diaHasta : String,
             mesHasta : String,
             anioHasta : String,
-            unicoValor : Long
+            unicoValor : String
 
     ) : List<ItemLista>?
 
@@ -89,7 +90,7 @@ interface busquedaItemsDAO {
             diaUnico : String,
             mesUnico : String,
             anioUnico : String,
-            unicoValor : Long
+            unicoValor : String
 
     ) : List<ItemLista>?
 }

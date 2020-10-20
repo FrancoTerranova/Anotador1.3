@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -22,22 +23,27 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.DataBase.DbViewModel
 import com.example.anotador10.databinding.FragmentNuevaListaBinding
+import com.example.classes.CustomEditText
 import com.example.viewModels.ControlViewModel
 import com.example.viewModels.ListaViewModel
 
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.android.synthetic.main.fragment_nueva_lista.*
 import kotlinx.android.synthetic.main.fragment_resultados_items.*
 import java.lang.StringBuilder
+import java.text.DecimalFormat
+import java.util.*
 
 
-class NuevaListaFragment : Fragment() {
+class NuevaListaFragment : Fragment(), TextWatcher {
 
     lateinit var controlVM : ControlViewModel
     lateinit var nuevalistabinding : FragmentNuevaListaBinding
     lateinit var dbVM : DbViewModel
     lateinit var listVM : ListaViewModel
     var guardar_lista = false
+    var valorcito : String = ""
     var cont : Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,15 +78,41 @@ class NuevaListaFragment : Fragment() {
             t.text = lis.size.toString()
         })
 
+        val tx : CustomEditText = view.findViewById(R.id.custET)
+        tx.addTextChangedListener(this)
+
+
+
+
     }
     fun Observar(viewGlobal: View){
 
+                listVM.prueb.observe(viewLifecycleOwner,Observer{txs ->
+                    val tx : CustomEditText = viewGlobal.findViewById(R.id.custET)
+                    if(txs != tx.text.toString()) {
 
+
+                        tx.setText(txs)
+
+                    }
+                })
                 controlVM.accion.observe(viewLifecycleOwner, Observer{id ->
 
                     if(id.equals(getString(R.string.addItem))){
+                        val edtxt : CustomEditText = viewGlobal.findViewById(R.id.custET)
+                        val nomTxt : EditText = viewGlobal.findViewById(R.id.ItemNomb)
 
-                        controlVM.setAccion("")
+
+                        var c = edtxt.text.toString().replace(".","").replace(",",".").replace("$","")
+
+                        // para recuperar de la BD
+                        var te = c.substringBefore(".")
+                        var fe = String.format(Locale.ITALIAN, "%,d", te.toLong())
+                        fe = fe + "," + c.substringAfter(".")
+                        //
+                        listVM.addItem(nomTxt.text.toString(),c.toBigDecimal())
+
+                        /*    controlVM.setAccion("")
                         val edtxt : EditText = EditText(requireActivity())
                         val edtxt1 : EditText = EditText(requireActivity())
                         val linlay2 : LinearLayout = LinearLayout(requireActivity())
@@ -102,7 +134,7 @@ class NuevaListaFragment : Fragment() {
 
                                 .setPositiveButton("Agregar"){
                                     dialog,which ->
-                                    listVM.addItem(edtxt.text.toString(),edtxt1.text.toString().toLong())
+
                                     actualizarLista(viewGlobal)
 
 
@@ -111,7 +143,7 @@ class NuevaListaFragment : Fragment() {
                                 .setNegativeButton("Cancelar"){
                                     dialog,which ->
                                 }
-                                .show()
+                                .show()*/
 
                     }
                          else
@@ -184,9 +216,9 @@ class NuevaListaFragment : Fragment() {
         })
     }
     fun actualizarLista(viewGlobal: View){
-        listVM.items.observe(viewLifecycleOwner, Observer { its ->
+      /*  listVM.items.observe(viewLifecycleOwner, Observer { its ->
         if(its != null) {
-            val linlay: LinearLayout = viewGlobal.findViewById(R.id.itemslist)
+           // val linlay: LinearLayout = viewGlobal.findViewById(R.id.itemslist)
             linlay.removeAllViews()
             val total : TextView = viewGlobal.findViewById(R.id.totalitems)
             for (it in its) {
@@ -226,10 +258,65 @@ class NuevaListaFragment : Fragment() {
                 total.text = listVM.totalitems.toString()
 
             }
-        })
+        })*/
 
     }
 
+    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+    }
+
+    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        if (p0 != null) {
+            if (p0.isNotEmpty() && !p0.toString().equals("") && !p0.toString().equals("$") && !p0.toString().equals(".")) {
+
+                var st = p0.toString()
+                if (!st.contains(",")) {
+                    st = st.replace(".", "").replace("$", "")
+                    st = String.format(Locale.ITALIAN, "%,d", st.toLong())
+                    listVM.seTprueb("$" + st)
+
+
+                } else {
+                    if (st.substringAfter(",").contains("."))
+                        st = st.substringBefore(",") + "," + st.substringAfter(",").replace(".", "")
+                    if (st.substringAfter(",").contains(","))
+                        st = st.substringBefore(",") + "," + st.substringAfter(",").replace(",", "")
+
+                    if (st.contains(",") && p0.toString().length == 1) {
+                        st = "0" + st
+                        listVM.seTprueb("$" + st)
+                    }
+
+                    else {
+                        if(st.substringAfter(",").length <= 2) {
+                            listVM.decimales_valor = st.substringAfter(",")
+                            listVM.seTprueb(st)
+                        }
+                        else{
+                            st = st.substringBefore(",") + "," + listVM.decimales_valor
+                            listVM.seTprueb(st)
+                        }
+                    }
+
+                }
+            } else {
+                if (p0.toString().equals("$") || p0.toString().equals(".")) {
+                    listVM.seTprueb("")
+                }
+            }
+
+
+        }
+    }
+
+    override fun afterTextChanged(p0: Editable?) {
+
+    }
+
+
 }
+
+
 
 

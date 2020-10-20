@@ -4,6 +4,7 @@ import Entities.ItemLista
 import Entities.Lista
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.*
@@ -14,18 +15,23 @@ class ListaViewModel : ViewModel() {
     var list : MutableLiveData<Lista> = MutableLiveData<Lista>(null)
     var items : MutableLiveData<ArrayList<ItemLista>> = MutableLiveData<ArrayList<ItemLista>>(null)
     var linlyout : Long = 0
-    var totalitems : Long = 0
+    var totalitems : BigDecimal = BigDecimal.ZERO
     var itemAgregado = false
+    var prueb : MutableLiveData<String> = MutableLiveData("")
+    var decimales_valor : String = ""
     fun iniciar(){
         list.value = Lista(0,0,"","","")
         items.value = ArrayList<ItemLista>()
-        totalitems = 0
+        totalitems = BigDecimal.ZERO
     }
-    fun addItem(nombreIt : String, precio : Long){
+    fun seTprueb(s : String){
+        prueb.value = s
+    }
+    fun addItem(nombreIt : String, precio : BigDecimal){
 
 
         val itsaux = items.value
-        val its = ItemLista(0,0,nombreIt,precio)
+        val its = ItemLista(0,0,nombreIt,precio.toString())
         totalitems += precio
         itsaux?.add(its)
         items.value = itsaux
@@ -43,7 +49,7 @@ class ListaViewModel : ViewModel() {
     fun limpiarDatos(){
         list.value = Lista(0,0,"","","")
         items.value = ArrayList<ItemLista>()
-        totalitems = 0
+        totalitems = BigDecimal.ZERO
     }
 
 

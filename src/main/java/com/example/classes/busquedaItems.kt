@@ -1,5 +1,7 @@
 package com.example.classes
 
+import java.math.BigDecimal
+
 class busquedaItems {
 
     var rngtxt : String = ""
@@ -13,14 +15,14 @@ class busquedaItems {
     var mesHasta : String = ""
     var anioHasta : String = ""
 
-    var valorDesde : Long = 0
-    var valorHasta : Long = 0
+    var valorDesde : BigDecimal = BigDecimal.ZERO
+    var valorHasta : BigDecimal = BigDecimal.ZERO
 
     var diaUnico : String = ""
     var mesUnico : String = ""
     var anioUnico : String = ""
 
-    var unicoValor : Long = 0
+    var unicoValor : BigDecimal = BigDecimal.ZERO
 
     var isRango : Boolean = false
     var isRangoValor : Boolean = false
@@ -70,8 +72,8 @@ class busquedaItems {
         if(ran != "") {
             valoRtxt = ran
             if (ran.contains("-")) {
-                val valorDsd = ran.substringBefore("-").toLong()
-                val valorhst = ran.substringAfter("-").toLong()
+                val valorDsd = ran.substringBefore("-").replace(",",".").toBigDecimal()
+                val valorhst = ran.substringAfter("-").replace(",",".").toBigDecimal()
 
                 valorDesde = valorDsd
                 valorHasta = valorhst
@@ -88,7 +90,7 @@ class busquedaItems {
 
                 }
             else {
-                unicoValor = ran.toLong()
+                unicoValor = ran.replace(",",".").toBigDecimal()
                     valorUnico = true
                     isRangoValor = false
                     valorCualquier = false

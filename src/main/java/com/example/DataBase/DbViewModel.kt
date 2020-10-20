@@ -106,8 +106,8 @@ class DbViewModel(application: Application) : AndroidViewModel(application) {
                             busq.diaHasta,
                             busq.mesHasta,
                             busq.anioHasta,
-                            busq.valorDesde,
-                            busq.valorHasta
+                            busq.valorDesde.toString(),
+                            busq.valorHasta.toString()
 
                     )
                 }
@@ -136,7 +136,7 @@ class DbViewModel(application: Application) : AndroidViewModel(application) {
                                         busq.diaHasta,
                                         busq.mesHasta,
                                         busq.anioHasta,
-                                        busq.unicoValor
+                                        busq.unicoValor.toString()
 
                                         )
 
@@ -150,8 +150,8 @@ class DbViewModel(application: Application) : AndroidViewModel(application) {
                             busq.diaUnico,
                             busq.mesUnico,
                             busq.anioUnico,
-                            busq.valorDesde,
-                            busq.valorHasta
+                            busq.valorDesde.toString(),
+                            busq.valorHasta.toString()
 
                     )
                 }
@@ -171,7 +171,7 @@ class DbViewModel(application: Application) : AndroidViewModel(application) {
                                     busq.diaUnico,
                                     busq.mesUnico,
                                     busq.anioUnico,
-                                    busq.unicoValor
+                                    busq.unicoValor.toString()
                             )
                         }
 

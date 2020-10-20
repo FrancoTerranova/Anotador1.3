@@ -67,7 +67,7 @@ class InicioFragment : Fragment() {
     }
     fun Observar(viewGlobal : View){
         //dbVM.addGastoMensual()
-       // dbVM.borrarTodo()
+        //dbVM.borrarTodo()
         controlVM.navegar.observe(viewLifecycleOwner, Observer { nav ->
             if(nav){
                 controlVM.setNavegar(false)

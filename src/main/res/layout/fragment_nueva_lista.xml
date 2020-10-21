@@ -46,6 +46,7 @@
             <Button
                 android:layout_width="153dp"
                 android:layout_height="match_parent"
+
                 android:onClick='@{() -> control.setAccion("editItem")}'
                 android:text="Ver agregados"
                 app:icon="@drawable/ic_baseline_edit_24" />
@@ -162,6 +163,7 @@
             >
 
             <Button
+                android:id="@+id/addItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Agregar item"

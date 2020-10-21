@@ -23,8 +23,8 @@ interface busquedaItemsDAO {
             diaHasta : String,
             mesHasta : String,
             anioHasta : String,
-            valorDesde : String,
-            valorHasta : String
+            valorDesde : Double,
+            valorHasta : Double
 
     ): List<ItemLista>?
 
@@ -39,8 +39,8 @@ interface busquedaItemsDAO {
             diaUnico : String,
             mesUnico : String,
             anioUnico : String,
-            valorDesde : String,
-            valorHasta : String
+            valorDesde : Double,
+            valorHasta : Double
 
     ) : List<ItemLista>?
 
@@ -76,7 +76,7 @@ interface busquedaItemsDAO {
             diaHasta : String,
             mesHasta : String,
             anioHasta : String,
-            unicoValor : String
+            unicoValor : Double
 
     ) : List<ItemLista>?
 
@@ -90,7 +90,7 @@ interface busquedaItemsDAO {
             diaUnico : String,
             mesUnico : String,
             anioUnico : String,
-            unicoValor : String
+            unicoValor : Double
 
     ) : List<ItemLista>?
 }

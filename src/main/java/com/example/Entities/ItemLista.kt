@@ -11,5 +11,5 @@ class ItemLista (
     var itemListaID : Long,
     var ListaID : Long,
     var NombreItem : String,
-    var Precio : String
+    var Precio : Double
 )

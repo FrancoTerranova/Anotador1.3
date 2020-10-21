@@ -1,22 +1,13 @@
 package com.example.anotador10
 
-import Entities.Lista
 import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.ScrollView
-import android.widget.TextView
-import androidx.core.view.children
-import androidx.core.view.setPadding
-import androidx.core.view.size
+import android.widget.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -24,15 +15,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.DataBase.DbViewModel
 import com.example.anotador10.databinding.FragmentNuevaListaBinding
 import com.example.classes.CustomEditText
+import com.example.classes.ItemsAgregadosDialogFragment
 import com.example.viewModels.ControlViewModel
 import com.example.viewModels.ListaViewModel
-
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import kotlinx.android.synthetic.main.fragment_nueva_lista.*
-import kotlinx.android.synthetic.main.fragment_resultados_items.*
-import java.lang.StringBuilder
-import java.text.DecimalFormat
 import java.util.*
 
 
@@ -42,9 +28,13 @@ class NuevaListaFragment : Fragment(), TextWatcher {
     lateinit var nuevalistabinding : FragmentNuevaListaBinding
     lateinit var dbVM : DbViewModel
     lateinit var listVM : ListaViewModel
+    var es_editar = false
     var guardar_lista = false
     var valorcito : String = ""
     var cont : Int = 0
+    var guardar_editado = false
+    lateinit var buttonagregar : Button
+    var  toast_error_item : Toast? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -74,12 +64,16 @@ class NuevaListaFragment : Fragment(), TextWatcher {
         listVM.iniciar()
 
         val t : TextView = view.findViewById(R.id.titulo)
-        dbVM.listas.observe(viewLifecycleOwner, Observer{lis ->
+        dbVM.listas.observe(viewLifecycleOwner, Observer { lis ->
             t.text = lis.size.toString()
         })
 
         val tx : CustomEditText = view.findViewById(R.id.custET)
         tx.addTextChangedListener(this)
+
+       buttonagregar  = view.findViewById<Button>(R.id.addItem)
+        buttonagregar.isEnabled = false
+        buttonagregar.isClickable = false
 
 
 
@@ -87,71 +81,80 @@ class NuevaListaFragment : Fragment(), TextWatcher {
     }
     fun Observar(viewGlobal: View){
 
-                listVM.prueb.observe(viewLifecycleOwner,Observer{txs ->
-                    val tx : CustomEditText = viewGlobal.findViewById(R.id.custET)
-                    if(txs != tx.text.toString()) {
+        listVM.editar_item.observe(viewLifecycleOwner, Observer { edit ->
+            if (edit) {
+                listVM.itemAEditar(false)
+                val tx: CustomEditText = viewGlobal.findViewById(R.id.custET)
+                val nom: EditText = viewGlobal.findViewById(R.id.ItemNomb)
+                es_editar = true
+                guardar_editado = true
+                if (listVM.item_a_editar?.Precio.toString().contains(".")) {
+                    val antescoma = String.format(Locale.ITALIAN, "%,d", listVM.item_a_editar?.Precio?.toLong())
+                    val dspcoma = listVM.item_a_editar?.Precio.toString().substringAfter(".")
+                    listVM.seTprueb("$" + antescoma + "," + dspcoma)
+                    nom.setText(listVM.item_a_editar?.NombreItem?.trim())
+                } else {
+                    val enterito = String.format(Locale.ITALIAN, "%,d", listVM.item_a_editar?.Precio?.toLong())
+                    listVM.seTprueb("$" + enterito)
+                    nom.setText(listVM.item_a_editar?.NombreItem?.trim())
+                }
+                es_editar = false
+
+
+            }
+        })
+
+                listVM.prueb.observe(viewLifecycleOwner, Observer { txs ->
+                    val tx: CustomEditText = viewGlobal.findViewById(R.id.custET)
+                    if (txs != tx.text.toString()) {
 
 
                         tx.setText(txs)
 
                     }
                 })
-                controlVM.accion.observe(viewLifecycleOwner, Observer{id ->
+                controlVM.accion.observe(viewLifecycleOwner, Observer { id ->
 
-                    if(id.equals(getString(R.string.addItem))){
-                        val edtxt : CustomEditText = viewGlobal.findViewById(R.id.custET)
-                        val nomTxt : EditText = viewGlobal.findViewById(R.id.ItemNomb)
+                    if (id.equals(getString(R.string.addItem))) {
+                        controlVM.setAccion("")
+                        val edtxt: CustomEditText = viewGlobal.findViewById(R.id.custET)
+                        val nomTxt: EditText = viewGlobal.findViewById(R.id.ItemNomb)
+                        if (edtxt.text.toString().isNotEmpty() && nomTxt.text.toString().isNotEmpty()) {
 
+                            var c = edtxt.text.toString().replace(".", "").replace(",", ".").replace("$", "")
 
-                        var c = edtxt.text.toString().replace(".","").replace(",",".").replace("$","")
+                            // para recuperar de la BD
+                            var te = c.substringBefore(".")
+                            var fe = String.format(Locale.ITALIAN, "%,d", te.toLong())
+                            fe = fe + "," + c.substringAfter(".")
+                            //
+                            if (!guardar_editado) {
+                                listVM.addItem(nomTxt.text.toString().trim(), c.toDouble())
+                                Toast.makeText(requireActivity(), "Item agregado con exito!", Toast.LENGTH_SHORT).show()
+                                LimpiarInterfaz(edtxt, nomTxt)
+                            } else {
+                                listVM.editarItem(nomTxt.text.toString(), c.toDouble())
+                                Toast.makeText(requireActivity(), "Item modificado con exito!", Toast.LENGTH_SHORT).show()
+                                LimpiarInterfaz(edtxt, nomTxt)
+                            }
+                        } else {
 
-                        // para recuperar de la BD
-                        var te = c.substringBefore(".")
-                        var fe = String.format(Locale.ITALIAN, "%,d", te.toLong())
-                        fe = fe + "," + c.substringAfter(".")
-                        //
-                        listVM.addItem(nomTxt.text.toString(),c.toBigDecimal())
-
-                        /*    controlVM.setAccion("")
-                        val edtxt : EditText = EditText(requireActivity())
-                        val edtxt1 : EditText = EditText(requireActivity())
-                        val linlay2 : LinearLayout = LinearLayout(requireActivity())
-                        edtxt.hint = "Nombre del item..."
-                        edtxt1.hint = "valor..."
-                        edtxt1.inputType = InputType.TYPE_CLASS_NUMBER
-                        linlay2.orientation = TextInputLayout.VERTICAL
-                        linlay2.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-
-                        linlay2.setPadding(50,50,50,50)
-                        linlay2.addView(edtxt)
-                        linlay2.addView(edtxt1)
-                            //TODO
-                        val alert = AlertDialog.Builder(requireActivity())
-                        alert.setMessage("Agregar Item")
-                                .setTitle("Ingrese el nombre y el valor del item")
-                                .setView(linlay2)
-
-
-                                .setPositiveButton("Agregar"){
-                                    dialog,which ->
-
-                                    actualizarLista(viewGlobal)
-
-
-
-                                }
-                                .setNegativeButton("Cancelar"){
-                                    dialog,which ->
-                                }
-                                .show()*/
-
-                    }
-                         else
-                        if(id.equals(getString(R.string.editItem))){
+                        if(!nomTxt.text.toString().isNotEmpty()) {
+                            if (toast_error_item != null) {
+                                toast_error_item!!.cancel()
+                            }
+                            toast_error_item = Toast.makeText(requireActivity(), "Debe indicar un nombre!", Toast.LENGTH_SHORT)
+                            toast_error_item!!.show()
+                        }
 
                         }
-                        else
-                            if(id.equals(getString(R.string.guardarItems))){
+
+                    } else
+                        if (id.equals(getString(R.string.editItem))) {
+                            val di = ItemsAgregadosDialogFragment()
+                            di.show((context as MainActivity).supportFragmentManager, "listAgregados")
+                        } else
+                            if (id.equals(getString(R.string.guardarItems))) {
 
                                 controlVM.setAccion("")
                                 val edtxt: EditText = EditText(requireActivity())
@@ -168,29 +171,24 @@ class NuevaListaFragment : Fragment(), TextWatcher {
                                 linlay2.setPadding(50, 50, 50, 50)
                                 linlay2.addView(edtxt)
                                 linlay2.addView(edtxt1)
-                                                // TODO
+                                // TODO
 
                                 val alert = AlertDialog.Builder(requireActivity())
                                 alert.setMessage("Guardar Lista")
 
                                         .setView(linlay2)
                                         .setPositiveButton("Aceptar") { dialog, which ->
-                                                            guardar_lista = true
-                                                           guardarLista(edtxt.text.toString(), edtxt1.text.toString())
+                                            guardar_lista = true
+                                            guardarLista(edtxt.text.toString(), edtxt1.text.toString())
 
 
-                                                        }
+                                        }
                                         .setNegativeButton("Cancelar") { dialog, which ->
-                                                        }
+                                        }
                                         .show()
 
 
-                                            }
-
-
-
-
-
+                            }
 
 
                 })
@@ -199,12 +197,18 @@ class NuevaListaFragment : Fragment(), TextWatcher {
 
     }
 
-    fun guardarLista(nomlis : String, descr : String?){
+
+    fun LimpiarInterfaz(valor: CustomEditText, nombre: EditText){
+            valor.setText("")
+            nombre.setText("")
+    }
+    fun guardarLista(nomlis: String, descr: String?){
         listVM.list.observe(viewLifecycleOwner, Observer { l ->
             listVM.items.observe(viewLifecycleOwner, Observer { its ->
-                if(its.size > 0 && (guardar_lista == true)) {
+                if (its.size > 0 && (guardar_lista == true)) {
                     listVM.guardarDatos(nomlis, descr)
                     dbVM.guardarLista(l, its)
+
                     listVM.limpiarDatos()
                     guardar_lista = false
                 }
@@ -267,46 +271,52 @@ class NuevaListaFragment : Fragment(), TextWatcher {
     }
 
     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        if (p0 != null) {
-            if (p0.isNotEmpty() && !p0.toString().equals("") && !p0.toString().equals("$") && !p0.toString().equals(".")) {
 
-                var st = p0.toString()
-                if (!st.contains(",")) {
-                    st = st.replace(".", "").replace("$", "")
-                    st = String.format(Locale.ITALIAN, "%,d", st.toLong())
-                    listVM.seTprueb("$" + st)
+        if(!es_editar) {
+            if (p0 != null) {
+                if (p0.isNotEmpty() && !p0.toString().equals("") && !p0.toString().equals("$") && !p0.toString().equals(".")) {
 
-
-                } else {
-                    if (st.substringAfter(",").contains("."))
-                        st = st.substringBefore(",") + "," + st.substringAfter(",").replace(".", "")
-                    if (st.substringAfter(",").contains(","))
-                        st = st.substringBefore(",") + "," + st.substringAfter(",").replace(",", "")
-
-                    if (st.contains(",") && p0.toString().length == 1) {
-                        st = "0" + st
+                    var st = p0.toString()
+                    buttonagregar.isEnabled = true
+                    buttonagregar.isClickable = true
+                    if (!st.contains(",")) {
+                        st = st.replace(".", "").replace("$", "")
+                        st = String.format(Locale.ITALIAN, "%,d", st.toLong())
                         listVM.seTprueb("$" + st)
-                    }
 
-                    else {
-                        if(st.substringAfter(",").length <= 2) {
-                            listVM.decimales_valor = st.substringAfter(",")
-                            listVM.seTprueb(st)
-                        }
-                        else{
-                            st = st.substringBefore(",") + "," + listVM.decimales_valor
-                            listVM.seTprueb(st)
-                        }
-                    }
 
+                    } else {
+
+
+                        if (st.substringAfter(",").contains("."))
+                            st = st.substringBefore(",") + "," + st.substringAfter(",").replace(".", "")
+                        if (st.substringAfter(",").contains(","))
+                            st = st.substringBefore(",") + "," + st.substringAfter(",").replace(",", "")
+
+                        if (st.contains(",") && p0.toString().length == 1) {
+                            st = "0" + st
+                            listVM.seTprueb("$" + st)
+                        } else {
+                            if (st.substringAfter(",").length <= 2) {
+                                listVM.decimales_valor = st.substringAfter(",")
+                                listVM.seTprueb(st)
+                            } else {
+                                st = st.substringBefore(",") + "," + listVM.decimales_valor
+                                listVM.seTprueb(st)
+                            }
+                        }
+
+                    }
+                } else {
+                    if (p0.toString().equals("$") || p0.toString().equals(".")) {
+                        listVM.seTprueb("")
+                        buttonagregar.isEnabled = false
+                        buttonagregar.isClickable = false
+                    }
                 }
-            } else {
-                if (p0.toString().equals("$") || p0.toString().equals(".")) {
-                    listVM.seTprueb("")
-                }
+
+
             }
-
-
         }
     }
 

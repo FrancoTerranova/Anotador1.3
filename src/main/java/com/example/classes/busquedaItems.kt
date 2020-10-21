@@ -15,14 +15,14 @@ class busquedaItems {
     var mesHasta : String = ""
     var anioHasta : String = ""
 
-    var valorDesde : BigDecimal = BigDecimal.ZERO
-    var valorHasta : BigDecimal = BigDecimal.ZERO
+    var valorDesde : Double = 0.0
+    var valorHasta : Double = 0.0
 
     var diaUnico : String = ""
     var mesUnico : String = ""
     var anioUnico : String = ""
 
-    var unicoValor : BigDecimal = BigDecimal.ZERO
+    var unicoValor : Double = 0.0
 
     var isRango : Boolean = false
     var isRangoValor : Boolean = false
@@ -72,8 +72,8 @@ class busquedaItems {
         if(ran != "") {
             valoRtxt = ran
             if (ran.contains("-")) {
-                val valorDsd = ran.substringBefore("-").replace(",",".").toBigDecimal()
-                val valorhst = ran.substringAfter("-").replace(",",".").toBigDecimal()
+                val valorDsd = ran.substringBefore("-").replace(",",".").toDouble()
+                val valorhst = ran.substringAfter("-").replace(",",".").toDouble()
 
                 valorDesde = valorDsd
                 valorHasta = valorhst
@@ -90,7 +90,7 @@ class busquedaItems {
 
                 }
             else {
-                unicoValor = ran.replace(",",".").toBigDecimal()
+                unicoValor = ran.replace(",",".").toDouble()
                     valorUnico = true
                     isRangoValor = false
                     valorCualquier = false

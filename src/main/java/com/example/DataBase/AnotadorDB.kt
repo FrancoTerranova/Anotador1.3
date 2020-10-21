@@ -21,7 +21,7 @@ import com.example.DAOS.busquedaItemsDAO
          Presupuesto::class
 
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 
 )

@@ -19,6 +19,9 @@ import com.example.classes.ItemsAgregadosDialogFragment
 import com.example.viewModels.ControlViewModel
 import com.example.viewModels.ListaViewModel
 import com.google.android.material.textfield.TextInputLayout
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.text.DecimalFormat
 import java.util.*
 
 
@@ -75,6 +78,7 @@ class NuevaListaFragment : Fragment(), TextWatcher {
         buttonagregar.isEnabled = false
         buttonagregar.isClickable = false
 
+        actualizarTotal(view)
 
 
 
@@ -84,17 +88,23 @@ class NuevaListaFragment : Fragment(), TextWatcher {
         listVM.editar_item.observe(viewLifecycleOwner, Observer { edit ->
             if (edit) {
                 listVM.itemAEditar(false)
-                val tx: CustomEditText = viewGlobal.findViewById(R.id.custET)
+
+
                 val nom: EditText = viewGlobal.findViewById(R.id.ItemNomb)
+
                 es_editar = true
                 guardar_editado = true
-                if (listVM.item_a_editar?.Precio.toString().contains(".")) {
-                    val antescoma = String.format(Locale.ITALIAN, "%,d", listVM.item_a_editar?.Precio?.toLong())
-                    val dspcoma = listVM.item_a_editar?.Precio.toString().substringAfter(".")
+
+
+                var precioDou  =  BigDecimal.valueOf(listVM.item_a_editar?.Precio!!)
+                precioDou =  precioDou.setScale(2, RoundingMode.HALF_UP)
+                if (precioDou.toString().contains(".")) {
+                    val antescoma = String.format(Locale.ITALIAN, "%,d", precioDou?.toLong())
+                    val dspcoma = precioDou.toString().substringAfter(".")
                     listVM.seTprueb("$" + antescoma + "," + dspcoma)
                     nom.setText(listVM.item_a_editar?.NombreItem?.trim())
                 } else {
-                    val enterito = String.format(Locale.ITALIAN, "%,d", listVM.item_a_editar?.Precio?.toLong())
+                    val enterito = String.format(Locale.ITALIAN, "%,d", precioDou?.toLong())
                     listVM.seTprueb("$" + enterito)
                     nom.setText(listVM.item_a_editar?.NombreItem?.trim())
                 }
@@ -131,11 +141,14 @@ class NuevaListaFragment : Fragment(), TextWatcher {
                             if (!guardar_editado) {
                                 listVM.addItem(nomTxt.text.toString().trim(), c.toDouble())
                                 Toast.makeText(requireActivity(), "Item agregado con exito!", Toast.LENGTH_SHORT).show()
+                                actualizarTotal(viewGlobal)
                                 LimpiarInterfaz(edtxt, nomTxt)
                             } else {
                                 listVM.editarItem(nomTxt.text.toString(), c.toDouble())
                                 Toast.makeText(requireActivity(), "Item modificado con exito!", Toast.LENGTH_SHORT).show()
+                                actualizarTotal(viewGlobal)
                                 LimpiarInterfaz(edtxt, nomTxt)
+                                guardar_editado = false
                             }
                         } else {
 
@@ -177,13 +190,13 @@ class NuevaListaFragment : Fragment(), TextWatcher {
                                 alert.setMessage("Guardar Lista")
 
                                         .setView(linlay2)
-                                        .setPositiveButton("Aceptar") { dialog, which ->
+                                        .setPositiveButton("Aceptar") { _, _ ->
                                             guardar_lista = true
                                             guardarLista(edtxt.text.toString(), edtxt1.text.toString())
-
+                                            actualizarTotal(viewGlobal)
 
                                         }
-                                        .setNegativeButton("Cancelar") { dialog, which ->
+                                        .setNegativeButton("Cancelar") { _, _ ->
                                         }
                                         .show()
 
@@ -197,10 +210,24 @@ class NuevaListaFragment : Fragment(), TextWatcher {
 
     }
 
+    fun medirDigitosEnteros(valr : String) : Boolean{
+        var auxi = valr
+        if(auxi.contains("$"))
+            auxi = auxi.replace("$","")
+        val largito = auxi.length
+        if(largito <= 11)
+            return true
+
+        return false
+
+
+    }
+
 
     fun LimpiarInterfaz(valor: CustomEditText, nombre: EditText){
             valor.setText("")
             nombre.setText("")
+
     }
     fun guardarLista(nomlis: String, descr: String?){
         listVM.list.observe(viewLifecycleOwner, Observer { l ->
@@ -219,7 +246,28 @@ class NuevaListaFragment : Fragment(), TextWatcher {
 
         })
     }
-    fun actualizarLista(viewGlobal: View){
+    fun actualizarTotal(viewGlobal: View){
+            val tot : TextView = viewGlobal.findViewById(R.id.totalitems)
+
+             var totatilo = listVM.getTotal()
+
+
+
+
+        var auxi =  BigDecimal.valueOf(totatilo)
+        auxi =  auxi.setScale(2, RoundingMode.HALF_UP)
+
+        var enterillo = String.format(Locale.ITALIAN, "%,d",totatilo.toLong() )
+
+        var finalnum : String
+        if(totatilo.toString().contains(".")) {
+            finalnum = enterillo + "," + auxi.toString().substringAfter(".")
+            tot.text = "$" + finalnum
+        }
+        else {
+
+            tot.text = "$" + enterillo
+        }
       /*  listVM.items.observe(viewLifecycleOwner, Observer { its ->
         if(its != null) {
            // val linlay: LinearLayout = viewGlobal.findViewById(R.id.itemslist)
@@ -280,10 +328,16 @@ class NuevaListaFragment : Fragment(), TextWatcher {
                     buttonagregar.isEnabled = true
                     buttonagregar.isClickable = true
                     if (!st.contains(",")) {
-                        st = st.replace(".", "").replace("$", "")
-                        st = String.format(Locale.ITALIAN, "%,d", st.toLong())
-                        listVM.seTprueb("$" + st)
+                        if(medirDigitosEnteros(st)) {
+                            st = st.replace(".", "").replace("$", "")
+                            st = String.format(Locale.ITALIAN, "%,d", st.toLong())
+                            listVM.valor_anterior_entero = st
+                            listVM.seTprueb("$" + st)
 
+                        }
+                        else{
+                                listVM.seTprueb("$" + listVM.valor_anterior_entero)
+                        }
 
                     } else {
 

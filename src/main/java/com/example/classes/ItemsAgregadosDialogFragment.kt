@@ -17,28 +17,45 @@ import com.example.anotador10.R
 import com.example.viewModels.BuscarItemViewModel
 import com.example.viewModels.ListaViewModel
 import com.google.android.material.textfield.TextInputLayout
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ItemsAgregadosDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
-            val selectedItems = ArrayList<Int>() // Where we track the selected items
+
             val builder = AlertDialog.Builder(it)
             val listVM = ViewModelProvider(requireActivity()).get(ListaViewModel::class.java)
-           /* val viewG = layoutInflater.inflate(R.layout.items_lista_agregados_dialog, null)
-            Iniciar(listVM,viewG)*/
+
             val itms = listVM.getAgregados()
             val itmsNP = ArrayList<String>()
             var item_checked = false
             for(its in itms!!){
 
-                itmsNP.add(its.NombreItem + " " + its.Precio)
+                var auxi =  BigDecimal.valueOf(its.Precio)
+                auxi =  auxi.setScale(2, RoundingMode.HALF_UP)
+                var enterillo = String.format(Locale.ITALIAN, "%,d",its.Precio.toLong() )
+
+                var finalnum : String
+                if(its.Precio.toString().contains(".")) {
+                    finalnum = enterillo + "," + auxi.toString().substringAfter(".")
+                    itmsNP.add(its.NombreItem + "-" + finalnum)
+                }
+                else {
+
+                    itmsNP.add(its.NombreItem + "-" + enterillo)
+                }
+
+
             }
-            val indx = arrayOf(Int,String)
+          /*  val indx = arrayOfNulls<String>(listVM.getAgregadosSize())
             var ind = 0
             for(itS in itms){
                indx[ind] = (itS.NombreItem + "-" + itS.Precio)
                 ind++
-            }
+            }*/
 
 
 
@@ -47,9 +64,19 @@ class ItemsAgregadosDialogFragment : DialogFragment() {
             builder.setTitle("Agregados")
                     // Specify the list array, the items to be selected by default (null for none),
                     // and the listener through which to receive callbacks when items are selected
-                    .setSingleChoiceItems(itmsNP.toArray(arrayOf()),-1) { dialog, which ->
-                        val itmen = indx.get(which.toInt()).toString()
+                    .setSingleChoiceItems(itmsNP.toArray(arrayOf()),-1) { _, which ->
+                        var itmen = itmsNP.get(which.toInt())
+                                //indx.get(which.toInt()).toString()
                         item_checked = true
+                        if(itmen.substringAfter("-").contains(".")){
+                            itmen = itmen.replace(".","")
+                            if(itmen.substringAfter("-").contains(","))
+                                itmen = itmen.replace(",",".")
+                        }
+                        else{
+                            if(itmen.substringAfter("-").contains(","))
+                                itmen = itmen.replace(",",".")
+                        }
                     listVM.item_a_editar = ItemLista(
                             0,
                             0,
@@ -61,7 +88,7 @@ class ItemsAgregadosDialogFragment : DialogFragment() {
                     }
                     // Set the action buttons
                     .setPositiveButton("Editar",
-                            DialogInterface.OnClickListener { dialog, id ->
+                            DialogInterface.OnClickListener { _, _ ->
                                 if(listVM.item_a_editar != null && item_checked == true)
                                 listVM.itemAEditar(true)
                                 else{
@@ -70,7 +97,7 @@ class ItemsAgregadosDialogFragment : DialogFragment() {
                                 }
                             })
                     .setNegativeButton("Cancelar",
-                            DialogInterface.OnClickListener { dialog, id ->
+                            DialogInterface.OnClickListener { _, _ ->
                                 if(listVM.item_a_editar != null)
                                     listVM.item_a_editar = null
                             })

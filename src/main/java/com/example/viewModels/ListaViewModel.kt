@@ -5,6 +5,7 @@ import Entities.Lista
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.*
@@ -16,6 +17,7 @@ class ListaViewModel : ViewModel() {
     var items : MutableLiveData<ArrayList<ItemLista>> = MutableLiveData<ArrayList<ItemLista>>(null)
     var editar_item : MutableLiveData<Boolean> = MutableLiveData(false)
     var item_a_editar : ItemLista? = null
+    var valor_anterior_entero : String = ""
     var linlyout : Long = 0
     var totalitems : Double = 0.0
     var itemAgregado = false
@@ -30,6 +32,16 @@ class ListaViewModel : ViewModel() {
     }
     fun seTprueb(s : String){
         prueb.value = s
+    }
+    fun getTotal() : Double{
+        val itm = items.value
+        var total : Double = 0.0
+        for(itms in itm!!){
+            total += itms.Precio
+        }
+        var bdecimal : BigDecimal = BigDecimal.valueOf(total)
+        bdecimal = bdecimal.setScale(2,RoundingMode.HALF_UP)
+        return bdecimal.toDouble()
     }
     fun itemAEditar(b : Boolean){
         editar_item.value = b

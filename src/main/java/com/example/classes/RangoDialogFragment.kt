@@ -109,12 +109,12 @@ class RangoDialogFragment : DialogFragment(), AdapterView.OnItemSelectedListener
             builder.setMessage("Prueba")
                     .setView(v)
                     .setPositiveButton("Aceptar",
-                            DialogInterface.OnClickListener { dialog, id ->
+                            DialogInterface.OnClickListener { _, _ ->
                                 crearRango()
 
                             })
                     .setNegativeButton("Cancelar",
-                            DialogInterface.OnClickListener { dialog, id ->
+                            DialogInterface.OnClickListener { _, _ ->
                                 // User cancelled the dialog
                             })
             // Create the AlertDialog object and return it

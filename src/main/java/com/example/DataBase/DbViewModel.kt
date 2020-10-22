@@ -35,7 +35,7 @@ class DbViewModel(application: Application) : AndroidViewModel(application) {
 
             withContext(Dispatchers.IO) {
                 listas = db.listaItemDAO().getListaWithItems()
-                val cal = Calendar.getInstance()
+                /// cambiar a java date
                 val fech = SimpleDateFormat("dd MM yyyy", Locale.forLanguageTag("es-ES"))
                         .format(java.util.Date())
 

@@ -27,11 +27,11 @@ class ValorUnicoDialogFragment : DialogFragment() {
             builder.setMessage("Prueba")
                     .setView(v)
                     .setPositiveButton("Aceptar",
-                            DialogInterface.OnClickListener { dialog, id ->
+                            DialogInterface.OnClickListener { _, _ ->
                                 crearValor()
                             })
                     .setNegativeButton("Cancelar",
-                            DialogInterface.OnClickListener { dialog, id ->
+                            DialogInterface.OnClickListener { _, _ ->
                                 // User cancelled the dialog
                             })
             // Create the AlertDialog object and return it
